@@ -1,0 +1,9 @@
+services:
+  api-gateway:
+    image: envoyproxy/envoy:v1.22-latest
+    container_name: api-gateway
+    volumes:
+      - ./ApiGateways/Envoy/config:/etc/envoy
+    ports:
+      - "80:80"
+      - "8001:8001"
