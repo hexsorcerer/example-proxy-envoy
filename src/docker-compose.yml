@@ -1,9 +1,23 @@
+networks:
+  envoy:
+    name: envoy
+
 services:
   api-gateway:
-    image: envoyproxy/envoy:v1.22-latest
+    image: envoyproxy/envoy:v1.23-latest
     container_name: api-gateway
+    networks:
+      - envoy
     volumes:
       - ./ApiGateways/Envoy/config:/etc/envoy
     ports:
       - "80:80"
       - "8001:8001"
+  example-api:
+    image: hexsorcerer/example-api
+    container_name: example-api
+    networks:
+      - envoy
+    build:
+      context: .
+      dockerfile: Services/Example/Example.API/Dockerfile
