@@ -1,5 +1,6 @@
 networks:
   envoy:
+    driver: bridge
     name: envoy
 
 services:
@@ -11,13 +12,18 @@ services:
     volumes:
       - ./ApiGateways/Envoy/config:/etc/envoy
     ports:
-      - "80:80"
+      - "8080:8080"
       - "8001:8001"
+    depends_on:
+      - example-api
+
   example-api:
     image: hexsorcerer/example-api
     container_name: example-api
     networks:
       - envoy
+    expose:
+      - "80"
     build:
       context: .
       dockerfile: Services/Example/Example.API/Dockerfile
