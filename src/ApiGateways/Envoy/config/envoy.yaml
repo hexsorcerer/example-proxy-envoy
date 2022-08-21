@@ -26,20 +26,56 @@ static_resources:
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
                 route_config:
-                  name: local_route
+                  name: local_http_route
                   virtual_hosts:
-                    - name: example-service
+                    - name: example-http-service
                       domains: ["*"]
                       routes:
                         - match:
                             prefix: "/WeatherForecast"
                           route:
                             cluster: exampleagg
+  
+    - name: listener_https
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 8081
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: ingress_http
+                access_log:
+                  - name: envoy.access_loggers.stdout
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
+                http_filters:
+                  - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+                route_config:
+                  name: local_https_route
+                  virtual_hosts:
+                    - name: example-https-service
+                      domains: [ "*" ]
+                      routes:
                         - match:
-                            prefix: "/"
+                            prefix: "/WeatherForecast"
                           route:
-                            cluster: exampleagg
-
+                            cluster: exampleagg-https
+          transport_socket:
+            name: envoy.transport_sockets.tls
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+              common_tls_context:
+                tls_certificates:
+                  certificate_chain: 
+                    filename: /https/envoy-cert.pem
+                  private_key:
+                    filename: /https/envoy-key.pem
+          
   clusters:
     - name: exampleagg
       connect_timeout: 5s
@@ -53,3 +89,23 @@ static_resources:
                     socket_address:
                       address: example-api
                       port_value: 80
+  
+    - name: exampleagg-https
+      connect_timeout: 5s
+      type: STRICT_DNS
+      load_assignment:
+        cluster_name: exampleagg-https
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: example-api-https
+                      port_value: 443
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+          common_tls_context:
+            validation_context:
+              trust_chain_verification: VERIFY_TRUST_CHAIN

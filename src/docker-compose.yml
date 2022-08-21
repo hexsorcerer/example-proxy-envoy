@@ -11,11 +11,14 @@ services:
       - envoy
     volumes:
       - ./ApiGateways/Envoy/config:/etc/envoy
+      - ${USERPROFILE}/.aspnet/https:/https/
     ports:
+      - "8001:8001" 
       - "8080:8080"
-      - "8001:8001"
+      - "8081:8081" 
     depends_on:
       - example-api
+      - example-api-https
 
   example-api:
     image: hexsorcerer/example-api
@@ -33,11 +36,7 @@ services:
     container_name: example-api-https
     networks:
       - envoy
-    ports:
-      - "8000:80"
-      - "8002:443" 
     expose:
-      - "80" 
       - "443"
     build:
       context: .
@@ -48,4 +47,4 @@ services:
       ASPNETCORE_Kestrel__Certificates__Default__Password: "${EXAMPLE_API_CERTIFICATE_PASSWORD}"
       ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/example-api.pfx"
     volumes:
-      - "${USERPROFILE}/.aspnet/https:/https/"
+      - ${USERPROFILE}/.aspnet/https:/https/
