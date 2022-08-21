@@ -7,7 +7,7 @@ This repo is a reference working setup with what I'd call the basics. It has a s
 
 # Getting Started
 
-You'll need the ASP.NET Core 6.0 SDK, and docker. For the TLS endpoint, you'll have to do some certificate work first. I documented my experience with that [here]().
+You'll need the ASP.NET Core 6.0 SDK, and docker. For the TLS endpoint, you'll have to do some certificate work first. I documented my experience with that [here](https://github.com/hexsorcerer/example-proxy-envoy/blob/main/docs/certs.md).
 
 You'll also need to copy the file src/.env.example to src/.env, and provide the password for the certificate you use for the service.
 
