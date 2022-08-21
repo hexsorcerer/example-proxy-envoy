@@ -351,3 +351,6 @@ MigrationBackup/
 
 # Jetbrains
 .idea/
+
+# env
+.env

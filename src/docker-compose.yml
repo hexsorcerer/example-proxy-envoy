@@ -27,3 +27,25 @@ services:
     build:
       context: .
       dockerfile: Services/Example/Example.API/Dockerfile
+  
+  example-api-https:
+    image: hexsorcerer/example-api
+    container_name: example-api-https
+    networks:
+      - envoy
+    ports:
+      - "8000:80"
+      - "8002:443" 
+    expose:
+      - "80" 
+      - "443"
+    build:
+      context: .
+      dockerfile: Services/Example/Example.API/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "https://+:443;http://+:80"
+      ASPNETCORE_HTTPS_PORT: 443
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "${EXAMPLE_API_CERTIFICATE_PASSWORD}"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/example-api.pfx"
+    volumes:
+      - "${USERPROFILE}/.aspnet/https:/https/"
