@@ -10,6 +10,7 @@ dotnet dev-certs https -ep %USERPROFILE%\.aspnet\https\example-api.pfx -p <passw
 
 This command will create the certificate for you. If you create it somewhere else, you'll have to update the docker-compose file with the new paths.
 
+Don't forget to add the password you set here to your src/.env file!
 ```
 dotnet dev-certs https --trust
 ```
