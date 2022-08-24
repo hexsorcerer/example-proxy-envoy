@@ -21,3 +21,12 @@ docker compose up -d
 This command will run the system as 3 containers; Envoy, and 2 instances of Example.API. One instance is configured for TLS and one is not, but it is otherwise the same service.
 
 You can connect to http://localhost:8080/WeatherForecast to hit the http version, or use https://localhost:8081/WeatherForecast to call the https version. They each behave the same, just showing the random weather JSON in the default web API project.
+
+# Stuff That Confused Me
+I don't work with these all the time, so there were some things that I had to work out to get this all working.
+
+The big one I took away from this is that proxy servers don't route endpoints to different endpoints. They route address:ports to other address:ports. My early attempts at this tried to route '/' on the incoming listener to '/WeatherForecast' on the backend cluster, which doesn't work.
+
+Instead, I matched the endpoints of the service in the listeners route section, and then selected the cluster to route to, without trying to specify anything else, and this works fine.
+
+Another thing that threw me off for a while was the documentation. Now that I've spent some time in it and kinda felt it out it's better, but initially it was kinda hard to find my way around in there. I think one reason is because all the documentation is provided with examples in JSON, but every real world example I could find was written in YAML. Not sure if JSON is actually supported or not, been curious but haven't had time to experiment with it.
