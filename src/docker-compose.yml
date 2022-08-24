@@ -13,9 +13,8 @@ services:
       - ./ApiGateways/Envoy/config:/etc/envoy
       - ${USERPROFILE}/.aspnet/https:/https/
     ports:
-      - "8001:8001" 
       - "8080:8080"
-      - "8081:8081" 
+      - "8081:8081"
     depends_on:
       - example-api
       - example-api-https
